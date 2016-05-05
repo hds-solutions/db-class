@@ -117,6 +117,8 @@
                 $dbc = new PDO($dsn, self::$USER, self::$PASS);
                 // seteamos los errores a excepcion
                 $dbc->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                // seteamos el timeout de conexion a 10s
+                $dbc->setAttribute(PDO::ATTR_TIMEOUT, 10);
                 // seteamos los caracteres a UTF8
                 $dbc->query("SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'");
                 // retornamos la conexion
