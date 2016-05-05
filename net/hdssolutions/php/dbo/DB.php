@@ -25,14 +25,15 @@
         private static $HOST = 'localhost';
         private static $PORT = '3306';
         private static $DDBB = null;
+        private static $TIMEOUT = 10;
 
         /**
          * Almacena los datos de conexion a la DDBB
-         * @param String $HOST Host
-         * @param String $PORT Puerto
-         * @param String $USER Usuario
-         * @param String $PASS Contraseña
-         * @param String $DDBB Base de Datos
+         * @param String Host
+         * @param String Puerto
+         * @param String Usuario
+         * @param String Contraseña
+         * @param String Base de Datos
          */
         public static function setParams($HOST, $PORT, $USER, $PASS, $DDBB) {
         	// los datos
@@ -44,8 +45,17 @@
         }
 
         /**
+         * Almacena el timeout para las conexiones
+         * @param int Timeout
+         */
+        public static function setTimeout($timeout) {
+        	// almacenamos el timeout
+        	self::$TIMEOUT = $timeout;
+        }
+
+        /**
          * Retorna una conexion a la base de datos
-         * @param string $trxName Nombre de la transaccion
+         * @param string Nombre de la transaccion
          * @return DB Conexion a la DB
          */
         public static function getConnection($trxName = null) {
@@ -66,7 +76,7 @@
 
         /**
          * Finaliza la transaccion
-         * @param type $trxName Nombre de la transaccion
+         * @param string Nombre de la transaccion
          * @return boolean
          */
         public static function commitTransaction($trxName) {
@@ -86,7 +96,7 @@
 
         /**
          * Cancela una transaccion en curso
-         * @param type $trxName Nombre de la transaccion
+         * @param string Nombre de la transaccion
          * @return boolean
          */
         public static function rollbackTransaction($trxName) {
@@ -117,6 +127,8 @@
                 $dbc = new PDO($dsn, self::$USER, self::$PASS);
                 // seteamos los errores a excepcion
                 $dbc->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                // seteamos el timeout de conexion a 10s
+                $dbc->setAttribute(PDO::ATTR_TIMEOUT, self::$TIMEOUT);
                 // seteamos los caracteres a UTF8
                 $dbc->query("SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'");
                 // retornamos la conexion
