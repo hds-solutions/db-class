@@ -3,6 +3,7 @@
 
     use PDO;
     use PDOException;
+    use DateTime;
 
     /**
      * Database
@@ -69,6 +70,15 @@
                 if ($trxName !== 'NULL')
                     // iniciamos la transaccion en la conexion
                     self::$connections[$trxName]->beginTransaction();
+                // sync TZ between PHP and MySQL
+                $now = new DateTime();
+                $mins = $now->getOffset() / 60;
+                $sign = $mins < 0 ? -1 : 1;
+                $mins = abs($mins);
+                $hours = floor($mins / 60);
+                $mins -= $hours * 60;
+                $offset = sprintf('%+d:%02d', $hours * $sign, $mins);
+                self::getConnection($trxName)->query("SET time_zone='$offset'");
             }
             // retornamos la conexion
             return self::$connections[$trxName];
